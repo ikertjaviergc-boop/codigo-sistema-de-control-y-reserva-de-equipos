@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap" style="max-width:1100px">
+  <div class="row" style="align-items:center;margin-bottom:16px">
+    <h1>{% if user.is_superuser %}Todas las solicitudes{% else %}Mis reservas{% endif %}</h1>
+    <div class="actions" style="margin:0">
+      {% if user.is_superuser %}<a class="btn" href="{% url 'reserva_crear' %}">Nueva solicitud</a>{% else %}<a class="btn" href="{% url 'catalogo' %}">Solicitar equipo</a>{% endif %}
+    </div>
+  </div>
+  <form method="get" class="filters">
+    {% if user.is_superuser %}<div><label for="q">Buscar (código, RUT o equipo)</label><input name="q" id="q" value="{{ q }}" placeholder="#RES-8942"></div>{% endif %}
+    <div><label for="estado">Estado</label>
+      <select name="estado" id="estado"><option value="">Todos</option>
+        <option value="CONFIRMADA" {% if estado == "CONFIRMADA" %}selected{% endif %}>Confirmada</option>
+        <option value="CANCELADA" {% if estado == "CANCELADA" %}selected{% endif %}>Cancelada</option></select></div>
+    <button class="btn">Filtrar</button>
+  </form>
+  {% if reservas %}
+  <div class="tablewrap"><table>
+    <tr><th>Código</th><th>Equipo</th>{% if user.is_superuser %}<th>Solicitante</th>{% endif %}<th>Fecha</th><th>Horario</th><th>Estado</th><th></th></tr>
+    {% for r in reservas %}
+    <tr>
+      <td><a href="{% url 'reserva_detalle' r.pk %}">{{ r.codigo }}</a></td>
+      <td>{{ r.equipo.nombre }}</td>
+      {% if user.is_superuser %}<td>{{ r.usuario.first_name|default:r.usuario.username }}<br><span class="mut">{{ r.usuario.username }}</span></td>{% endif %}
+      <td>{{ r.fecha|date:"d/m/Y" }}</td><td>{{ r.horario }}</td>
+      <td><span class="tag {% if r.estado == 'CONFIRMADA' %}ok{% else %}gris{% endif %}" style="margin:0">{{ r.get_estado_display }}</span></td>
+      <td style="white-space:nowrap">
+        <a class="btn out sm" href="{% url 'reserva_detalle' r.pk %}">Ver</a>
+        {% if user.is_superuser %}<a class="btn out sm" href="{% url 'reserva_editar' r.pk %}">Editar</a>
+        <a class="btn red sm" href="{% url 'reserva_eliminar' r.pk %}">Eliminar</a>{% endif %}
+        {% if r.estado == "CONFIRMADA" %}<form method="post" action="{% url 'reserva_cancelar' r.pk %}" class="inline" onsubmit="return confirm('¿Cancelar la reserva {{ r.codigo }}?')">{% csrf_token %}<button class="btn out sm">Cancelar</button></form>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}
+  <div class="card"><p class="mut">No hay reservas para mostrar. <a href="{% url 'catalogo' %}">Explora el catálogo</a> para crear una.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap" style="max-width:1100px">
+  <h1 style="margin-bottom:16px">Usuarios</h1>
+  <div class="tablewrap"><table>
+    <tr><th>RUT / Usuario</th><th>Nombre</th><th>Tipo</th><th>Departamento</th><th>Reservas</th></tr>
+    {% for u in usuarios %}
+    <tr><td>{{ u.username }}</td><td>{{ u.first_name|default:"—" }}</td>
+      <td>{% if u.is_superuser %}Encargado{% else %}{{ u.perfil.tipo|default:"—" }}{% endif %}</td>
+      <td>{{ u.perfil.departamento|default:"—" }}</td><td>{{ u.n_reservas }}</td></tr>
+    {% endfor %}
+  </table></div>
+</div>
+{% endblock %}

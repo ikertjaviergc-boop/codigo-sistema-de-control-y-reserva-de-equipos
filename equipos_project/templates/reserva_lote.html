@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap" style="max-width:640px"><div class="card ticket">
+  <div class="ok-ic">✓</div>
+  <h1 class="center" style="color:var(--ok)">{{ reservas|length }} equipos reservados</h1>
+  <p class="mut center">{{ primera.equipo.nombre }} · {{ primera.fecha|date:"d/m/Y" }} · Bloque {{ primera.bloque }} ({{ primera.horario }})</p>
+  <div class="tablewrap" style="margin-top:20px"><table>
+    <tr><th>Reserva</th><th>Equipo</th><th></th></tr>
+    {% for r in reservas %}
+    <tr><td>{{ r.codigo }}</td><td>{{ r.equipo.codigo }}</td><td><a href="{% url 'reserva_detalle' r.pk %}">Ver ticket</a></td></tr>
+    {% endfor %}
+  </table></div>
+  <div class="rule"><b>Regla importante de retiro:</b><br>Si no retiras los equipos dentro de los primeros 15 minutos del bloque (hasta las {{ primera.limite_retiro }} hrs), las reservas se cancelarán automáticamente por No-Show.</div>
+  <div class="actions noprint" style="justify-content:center">
+    <button class="btn" onclick="window.print()">Descargar ticket</button>
+    <a class="btn out" href="{% url 'catalogo' %}">Ir al catálogo</a>
+    <a class="btn out" href="{% url 'reservas' %}">Mis reservas</a>
+  </div>
+</div></div>
+{% endblock %}

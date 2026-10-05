@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="wrap" style="max-width:1100px">
+  <form method="get" class="filters">
+    <div><label for="categoria">Categoría</label>
+      <select name="categoria" id="categoria"><option value="">Todos</option>
+        {% for c in categorias %}<option value="{{ c }}" {% if c == categoria %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select></div>
+    <div><label for="fecha">Fecha</label><input type="date" name="fecha" id="fecha" value="{{ fecha|date:'Y-m-d' }}"></div>
+    <div><label for="bloque">Bloque</label>
+      <select name="bloque" id="bloque">{% for v, t in bloques %}<option value="{{ v }}" {% if v == bloque %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></div>
+    <button class="btn">Buscar</button>
+  </form>
+  <h1 style="margin-bottom:20px">Equipos disponibles · {{ bloque_texto }}</h1>
+  {% if grupos %}
+  <div class="grid">
+    {% for g in grupos %}
+    <article class="eq">
+      <div class="ph">{% if g.imagen %}<img src="{{ g.imagen.url }}" alt="{{ g.nombre }}">{% else %}<img class="icon" src="{% static 'img/impresora.png' %}" alt="">{% endif %}</div>
+      <div class="b">
+        <h3>{{ g.nombre }}</h3><div class="mut">{{ g.categoria }}</div>
+        <span class="tag {% if g.libres %}ok{% else %}bad{% endif %}">{% if g.libres %}{{ g.libres }} de {{ g.total }} disponibles{% else %}SIN DISPONIBILIDAD{% endif %}</span>
+        {% if g.libres %}
+        <form method="post" action="{% url 'solicitar_lote' %}" class="qty">
+          {% csrf_token %}
+          <input type="hidden" name="nombre" value="{{ g.nombre }}">
+          <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+          <input type="hidden" name="bloque" value="{{ bloque }}">
+          <div><label for="c{{ forloop.counter }}">Cantidad</label>
+            <input type="number" id="c{{ forloop.counter }}" name="cantidad" min="1" max="{{ g.libres }}" value="1" required></div>
+          <button class="btn">Solicitar</button>
+        </form>
+        {% else %}<span class="btn off btn block" aria-disabled="true">No disponible</span>{% endif %}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card"><p class="mut">No hay equipos en esta categoría. {% if user.is_superuser %}<a href="/admin/reservas/equipo/add/">Agrega el primer equipo</a>.{% endif %}</p></div>
+  {% endif %}
+</div>
+{% endblock %}

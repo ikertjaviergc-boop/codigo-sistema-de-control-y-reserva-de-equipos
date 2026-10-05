@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="wrap">
+  <h1>Hola, {{ user.first_name|default:user.username }}</h1>
+  <p class="mut">{% if user.is_superuser %}Panel del encargado: administra todas las solicitudes.{% else %}Reserva equipos audiovisuales por bloque horario.{% endif %}</p>
+  <div class="stats">
+    <div class="stat"><b>{{ total_activas }}</b>{% if user.is_superuser %}Reservas activas{% else %}Mis reservas activas{% endif %}</div>
+    <div class="stat"><b>{{ total_equipos }}</b>Equipos en el catálogo</div>
+  </div>
+  <div class="card">
+    <h2>Próximas reservas</h2>
+    {% if proximas %}
+    <div class="tablewrap"><table>
+      <tr><th>Código</th><th>Equipo</th>{% if user.is_superuser %}<th>Solicitante</th>{% endif %}<th>Fecha</th><th>Horario</th></tr>
+      {% for r in proximas %}
+      <tr><td><a href="{% url 'reserva_detalle' r.pk %}">{{ r.codigo }}</a></td><td>{{ r.equipo.nombre }}</td>{% if user.is_superuser %}<td>{{ r.usuario.first_name|default:r.usuario.username }}</td>{% endif %}<td>{{ r.fecha|date:"d/m/Y" }}</td><td>{{ r.horario }}</td></tr>
+      {% endfor %}
+    </table></div>
+    {% else %}
+    <p class="mut">No tienes reservas próximas.</p>
+    {% endif %}
+    <div class="actions"><a class="btn" href="{% url 'catalogo' %}">Ver catálogo</a></div>
+  </div>
+</div>
+{% else %}
+<div class="card auth">
+  <h1 class="center">Iniciar sesión</h1>
+  <p class="mut center">Ingresa tus credenciales universitarias</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="msg error">Revisa tu RUT y contraseña, o crea una cuenta si aún no tienes.</div>{% endif %}
+    <label for="id_username">RUT / Usuario</label>
+    <input type="text" name="username" id="id_username" placeholder="12.345.678-K" value="{{ request.POST.username }}" required autofocus>
+    <label for="id_password">Contraseña</label>
+    <input type="password" name="password" id="id_password" required>
+    <label class="check"><input type="checkbox" name="recordar" checked> Mantener sesión iniciada</label>
+    <button class="btn block">Ingresar al sistema</button>
+  </form>
+  <p class="center mut" style="margin-top:20px">¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate</a></p>
+</div>
+{% endif %}
+{% endblock %}

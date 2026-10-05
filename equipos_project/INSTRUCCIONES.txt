@@ -1,0 +1,67 @@
+=====================================================
+ SISTEMA DE CONTROL Y RESERVA DE EQUIPOS - INSTRUCCIONES
+=====================================================
+
+ANTES DE EMPEZAR (solo una vez)
+-------------------------------
+1) Instala Python 3.10 o superior desde https://www.python.org/downloads/
+   - En Windows: al instalar, MARCA la casilla "Add Python to PATH".
+2) Descomprime el proyecto (equipos_project.zip) en una carpeta.
+3) Copia el archivo requirements.txt dentro de la carpeta equipos_project
+   (junto al archivo manage.py), reemplazando el que ya existe.
+
+PASO A PASO
+-----------
+Abre una terminal DENTRO de la carpeta equipos_project
+(Windows: abre la carpeta, escribe "cmd" en la barra de direcciones y Enter).
+
+PASO 1 - Crear el entorno virtual (una sola vez)
+   Windows:      python -m venv venv
+   Mac / Linux:  python3 -m venv venv
+
+PASO 2 - Activar el entorno virtual (cada vez que abras una terminal nueva)
+   Windows:      venv\Scripts\activate
+   Mac / Linux:  source venv/bin/activate
+   (Si funciona, verás "(venv)" al inicio de la línea.)
+
+PASO 3 - Instalar lo necesario (una sola vez)
+   pip install -r requirements.txt
+   Esto instala: Django, Pillow (imágenes) y qrcode (códigos QR).
+
+PASO 4 - Preparar la base de datos (una sola vez)
+   python manage.py migrate
+
+PASO 5 - Cargar los equipos iniciales (opcional, una sola vez)
+   python manage.py cargar_equipos
+   Crea 5 cámaras, 10 proyectores y 25 laptops. Se puede repetir sin duplicar.
+
+PASO 6 - Crear el usuario encargado / superusuario (una sola vez)
+   python manage.py createsuperuser
+   Te pedirá usuario, correo (puede quedar vacío) y contraseña.
+   (Al escribir la contraseña no se ve nada en pantalla; es normal.)
+   Si el proyecto ya trae un superusuario en db.sqlite3, puedes omitir este paso.
+
+PASO 7 - Iniciar el sitio
+   python manage.py runserver
+
+PASO 8 - Abrir en el navegador
+   http://127.0.0.1:8000/
+   Panel de administración: http://127.0.0.1:8000/admin/
+
+PARA DETENER EL SITIO
+   En la terminal presiona Ctrl + C.
+
+LA PRÓXIMA VEZ QUE QUIERAS USARLO
+---------------------------------
+Solo repite el PASO 2 (activar entorno) y el PASO 7 (runserver).
+
+PROBLEMAS FRECUENTES
+--------------------
+- "python no se reconoce como comando": reinstala Python marcando
+  "Add Python to PATH", o prueba con "py" en lugar de "python" (Windows).
+- "No module named django": no activaste el entorno (PASO 2) o
+  no ejecutaste el PASO 3.
+- "Port is already in use": usa otro puerto ->
+  python manage.py runserver 8001
+- En Windows, si el PASO 2 da error de permisos en PowerShell, usa "cmd"
+  en lugar de PowerShell.

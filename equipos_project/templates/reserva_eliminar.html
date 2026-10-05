@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap" style="max-width:520px"><div class="card center">
+  <h1>Eliminar reserva</h1>
+  <p class="mut">Se eliminará {{ reserva.codigo }} ({{ reserva.equipo.nombre }}, {{ reserva.fecha|date:"d/m/Y" }}). Esta acción no se puede deshacer.</p>
+  <form method="post">{% csrf_token %}
+    <div class="actions" style="justify-content:center"><a class="btn out" href="{% url 'reservas' %}">Volver</a><button class="btn red">Eliminar</button></div>
+  </form>
+</div></div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card auth">
+  <h1 class="center">Crear cuenta</h1>
+  <p class="mut center">Tu RUT será tu usuario para ingresar</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "_campos.html" %}
+    <button class="btn block">Crear cuenta</button>
+  </form>
+  <p class="center mut" style="margin-top:20px">¿Ya tienes cuenta? <a href="{% url 'inicio' %}">Inicia sesión</a></p>
+</div>
+{% endblock %}

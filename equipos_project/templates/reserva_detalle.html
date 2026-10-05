@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap" style="max-width:560px"><div class="card ticket">
+  {% if reserva.estado == "CONFIRMADA" %}
+  <div class="ok-ic">✓</div>
+  <h1 class="center" style="color:var(--ok)">Reserva confirmada</h1>
+  <p class="mut center">Presenta este ticket al retirar el equipo.</p>
+  {% else %}
+  <h1 class="center">Reserva cancelada</h1>
+  <p class="mut center">Esta reserva ya no está activa.</p>
+  {% endif %}
+  <dl>
+    <div class="r"><dt>Código de reserva</dt><dd>{{ reserva.codigo }}</dd></div>
+    <div class="r"><dt>Equipo</dt><dd>{{ reserva.equipo.nombre }} ({{ reserva.equipo.codigo }})</dd></div>
+    {% if user.is_superuser %}<div class="r"><dt>Solicitante</dt><dd>{{ reserva.usuario.first_name|default:reserva.usuario.username }} ({{ reserva.usuario.username }})</dd></div>{% endif %}
+    <div class="r"><dt>Fecha</dt><dd>{{ reserva.fecha|date:"d/m/Y" }}</dd></div>
+    <div class="r"><dt>Horario</dt><dd>Bloque {{ reserva.bloque }} ({{ reserva.horario }})</dd></div>
+  </dl>
+  {% if reserva.estado == "CONFIRMADA" %}
+    <div class="qr">{% if qr %}{{ qr|safe }}{% else %}<span class="mut">{{ reserva.codigo }}</span>{% endif %}</div>
+    <p class="mut center" style="font-size:12px">Código QR de retiro</p>
+    <div class="rule"><b>Regla importante de retiro:</b><br>Si no retiras el equipo dentro de los primeros 15 minutos del bloque (hasta las {{ reserva.limite_retiro }} hrs), la reserva se cancelará automáticamente por No-Show.</div>
+  {% endif %}
+  <div class="actions noprint" style="justify-content:center">
+    {% if reserva.estado == "CONFIRMADA" %}<button class="btn" onclick="window.print()">Descargar ticket</button>{% endif %}
+    <a class="btn out" href="{% url 'catalogo' %}">Ir al catálogo</a>
+    <a class="btn out" href="{% url 'reservas' %}">Mis reservas</a>
+  </div>
+</div></div>
+{% endblock %}

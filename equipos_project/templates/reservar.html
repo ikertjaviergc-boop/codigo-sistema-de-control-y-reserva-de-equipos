@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap"><div class="card">
+  <h2>Detalles del equipo</h2>
+  <p><span class="mut">Equipo:</span> <b>{{ equipo.nombre }}</b></p>
+  <p class="mut">Código interno: <b>{{ equipo.codigo }}</b> · Ubicación: <b>{{ equipo.ubicacion|default:"—" }}</b></p>
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <h2>Datos del solicitante</h2>
+  <div class="row">
+    <div><span class="mut">RUT</span><br><b>{{ user.username }}</b></div>
+    <div><span class="mut">Nombre</span><br><b>{{ user.first_name|default:user.username }}</b></div>
+    <div><span class="mut">Tipo de usuario</span><br><b>{{ user.perfil.tipo|default:"—" }}</b></div>
+    <div><span class="mut">Departamento</span><br><b>{{ user.perfil.departamento|default:"—" }}</b></div>
+  </div>
+  <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <h2>Selección de horario</h2>
+    {% include "_campos.html" %}
+    <div class="actions">
+      <a class="btn out" href="{% url 'catalogo' %}">Cancelar</a>
+      <button class="btn">Confirmar reserva</button>
+    </div>
+  </form>
+</div></div>
+{% endblock %}
